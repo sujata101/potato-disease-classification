@@ -1,18 +1,18 @@
 
 
-from fastapi import FastAPI, File, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-import numpy as np
-from io import BytesIO
+from fastapi import FastAPI, File, UploadFile # Fast API for making the server
+from fastapi.middleware.cors import CORSMiddleware # cors making making connection between frontend port and backend port
+import uvicorn # for running the file and start the server
+import numpy as np 
+from io import BytesIO # for open the image file in binary format
 from PIL import Image
 import tensorflow as tf
 
-app = FastAPI()
+app = FastAPI() # initializeing the server
 
 origins = [
-    "http://localhost",
-    "http://localhost:3000",
+    "http://localhost", # this allow every port
+    "http://localhost:3000", # delcaring the port number for the frontend 
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -20,13 +20,15 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)
+) # middleware sits before your API endpoints, handling requests and responses.
 
-MODEL = tf.keras.models.load_model("../saved_models/1")
+MODEL = tf.keras.models.load_model("../saved_models/1") # importing the model
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
-@app.get("/ping")
+RESTful API = REST = Representational State Transfer = architecture for making API
+
+@app.get("/ping") # api
 async def ping():
     return "Hello, I am alive"
 
@@ -34,7 +36,7 @@ def read_file_as_image(data) -> np.ndarray:
     image = np.array(Image.open(BytesIO(data)))
     return image
 
-@app.post("/predict")
+@app.post("/predict") # api
 async def predict(
     file: UploadFile = File(...)
 ):
